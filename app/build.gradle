@@ -1,0 +1,27 @@
+apply plugin: 'com.android.application'
+//apply plugin: 'kotlin-android'
+//apply plugin: 'kotlin-parcelize'
+//在Kotlin 1.4.20-M2中，JetBrains废弃了Kotlin Android Extensions编译插件。
+//JetBrains废弃了Kotlin Android Extensions，推荐使用View Binding
+/*buildFeatures {
+    viewBinding true
+}*/
+//apply plugin: 'kotlin-android-extensions'
+//引用dependencies中的配置
+apply from: '../dependencies.gradle'
+android {
+    defaultConfig {
+        applicationId "com.zzq.my.jetpacks.demo"
+    }
+}
+
+dependencies {
+//    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+//    implementation 'androidx.lifecycle:lifecycle-viewmodel-savedstate:2.2.0'
+
+//在gradle.properties中配置的字段，读取出来是string的，所以toBoolean才是布尔值
+    if (!singleModule.toBoolean()) {
+        implementation project(path: ':Databinding')
+    }
+
+}

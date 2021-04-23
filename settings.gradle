@@ -1,0 +1,3 @@
+include ':Databinding'
+include ':app'
+rootProject.name = "MyJetpackDemo"

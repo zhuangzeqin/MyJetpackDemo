@@ -1,0 +1,26 @@
+//根据是否独立运行，将模块作为apk还是module
+if (singleModule.toBoolean()) {
+    apply plugin: 'com.android.application'
+} else {
+    apply plugin: 'com.android.library'
+}
+//引用dependencies中的配置
+apply from: '../dependencies.gradle'
+apply plugin: 'kotlin-android'
+android {
+    defaultConfig {
+        //只有独立运行时候才需要applicationId
+        if (singleModule.toBoolean()) {
+            applicationId "com.zzq.my.jetpacks.databinding"
+        }
+    }
+
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+
+//    便于统一管理，都放在了dependencies.gradle文件内了，这里文件顶部有apply form
+//	其实可以每个模块仅仅添加各自所需要的依赖库，不过那么比较分散，不便管理
+}
