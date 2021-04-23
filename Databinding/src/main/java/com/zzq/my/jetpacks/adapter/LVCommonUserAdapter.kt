@@ -25,7 +25,9 @@ import com.zzq.my.jetpacks.databinding.databinding.ItemLvBinding
   * ----------------------------------------------------------------
   * ================================================
   */
-class LVCommonUserAdapter(context: Context) : BaseLvBindingAdapter<CommonUser, ItemLvBinding>(context) {
+class LVCommonUserAdapter(context: Context) : BaseLvBindingAdapter<CommonUser, ItemLvBinding>(
+    context
+) {
     /**
      * 布局id
      */
@@ -35,5 +37,6 @@ class LVCommonUserAdapter(context: Context) : BaseLvBindingAdapter<CommonUser, I
      * data 标签的变量标识
      */
     override fun variableId(): Int = BR.user
+
 
 }

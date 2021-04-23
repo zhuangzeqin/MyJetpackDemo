@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools">
+<!--item 进行databinding 进行绑定的-->
+	<data>
+		<variable
+			name="MultiMsgBean"
+			type="com.zzq.my.jetpacks.bean.MultiMsg" />
+	</data>
+
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="1dp"
+		android:orientation="horizontal"
+		android:background="@android:color/holo_purple"
+		android:padding="5dp">
+
+		<androidx.appcompat.widget.AppCompatTextView
+			android:layout_width="30dp"
+			android:layout_height="wrap_content"
+			android:gravity="center"
+			android:text="@{MultiMsgBean.message.user_name}"
+			tools:text="姓名" />
+		<!--注意，这里age、sex是Int类型，所以要转为string，而且这类错误，不易发现-->
+		<androidx.appcompat.widget.AppCompatTextView
+			android:layout_width="30dp"
+			android:layout_height="wrap_content"
+			android:gravity="center"
+			android:text="@{MultiMsgBean.message.user_sex+``}"
+			tools:text="性别" />
+
+		<androidx.appcompat.widget.AppCompatTextView
+			android:layout_width="20dp"
+			android:layout_height="wrap_content"
+			android:gravity="center"
+			android:text="@{MultiMsgBean.message.user_tel+``}"
+			tools:text="电话" />
+
+	</LinearLayout>
+</layout>

@@ -5,6 +5,10 @@
         <variable
             name="ladapter"
             type="com.zzq.my.jetpacks.adapter.LVCommonUserAdapter" />
+
+        <variable
+            name="ladapterMultiAdapter"
+            type="com.zzq.my.jetpacks.adapter.LVCommonUserMultiAdapter" />
     </data>
 
 
@@ -27,7 +31,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            app:adapter="@{ladapter}"
+            app:adapter="@{ladapterMultiAdapter}"
             tools:listitem="@layout/item_lv" />
 
         <!--RecyclerView可以在xml中写好layoutManager以及adapter的引用，
