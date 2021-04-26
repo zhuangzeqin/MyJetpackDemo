@@ -3,7 +3,7 @@ import androidx.annotation.Keep
 
 
 /**
- * 描述：class describe
+ * 描述：数据类
  * 作者：zhuangzeqin
  * 时间: 2021/4/23-17:35
  * 邮箱：zzq@eeepay.cn

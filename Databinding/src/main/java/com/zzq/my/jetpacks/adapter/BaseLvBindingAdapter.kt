@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 
@@ -92,10 +93,11 @@ abstract class BaseLvBindingAdapter<T, vb : ViewDataBinding>(context: Context) :
     /**
      * 布局id
      */
-    abstract fun getLayoutId(): Int
+    @LayoutRes
+    protected abstract fun  getLayoutId(): Int
 
     /**
      * data 标签的变量标识
      */
-    abstract fun variableId(): Int
+    protected abstract fun variableId(): Int
 }

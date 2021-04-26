@@ -9,6 +9,10 @@
         <variable
             name="ladapterMultiAdapter"
             type="com.zzq.my.jetpacks.adapter.LVCommonUserMultiAdapter" />
+
+        <variable
+            name="radapter"
+            type="com.zzq.my.jetpacks.adapter.RVCommonUserAdapter" />
     </data>
 
 
@@ -36,14 +40,14 @@
 
         <!--RecyclerView可以在xml中写好layoutManager以及adapter的引用，
         这些有时候xml不会提示和补全 ,默认是竖直方向 orientation，所以有时候可以不写-->
-<!--        <androidx.recyclerview.widget.RecyclerView-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:layout_weight="1"-->
-<!--            android:orientation="vertical"-->
-<!--            app:adapter="@{radapter}"-->
-<!--            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"-->
-<!--            tools:listitem="@layout/item_lv" />-->
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            app:adapter="@{radapter}"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_lv" />
 
     </LinearLayout>
 

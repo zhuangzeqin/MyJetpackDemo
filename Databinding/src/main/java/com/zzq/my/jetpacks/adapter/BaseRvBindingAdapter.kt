@@ -4,16 +4,17 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.BaseAdapter
 import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
+import androidx.recyclerview.widget.RecyclerView
+
 
 /*
   * ================================================
-  * 描述：ListView 抽象出 多布局 databinding Adapter 适配器 基类
+  * 描述：rv 适配器基类封装
   * 作者：zhuangzeqin
-  * 时间: 2021/4/22-10:25
+  * 时间: 2021/4/26-19:37
   * 邮箱：zzq@eeepay.cn
   * 备注:
   * ----------------------------------------------------------------
@@ -28,38 +29,10 @@ import androidx.databinding.ViewDataBinding
   * ----------------------------------------------------------------
   * ================================================
   */
-abstract class BaseLvBindingMultiLayoutAdapter<T>(context: Context) :
-    BaseAdapter() {
-    private val mLayoutInflater: LayoutInflater by lazy { LayoutInflater.from(context) }
-
+abstract class BaseRvBindingAdapter<T, vb : ViewDataBinding>(var context: Context) :
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     //数据的集合
     private var mData: MutableList<T> = mutableListOf()
-
-    override fun getCount(): Int = if (mData.isNullOrEmpty()) 0 else mData.size
-
-    override fun getItem(position: Int): T = mData[position]
-
-    override fun getItemId(position: Int): Long {
-        return position.toLong()
-    }
-
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-        val type = getItemViewType(position)//类型
-        var cView: View? = convertView
-        val binding: ViewDataBinding
-        if (cView == null) {
-            // 按当前所需的类型，确定new的所需布局
-            binding = DataBindingUtil.inflate(mLayoutInflater, getLayoutId(type), parent, false)
-            cView = binding.root
-            cView.tag = binding
-        } else {
-            binding = cView.tag as ViewDataBinding
-        }
-        //设置绑定data 标签的变量 名称
-        binding.setVariable(variableId(type), getItem(position))
-        return binding.root
-    }
-
     open fun add(t: T?) {
         t?.let { this.mData.add(it) }
         notifyDataSetChanged()
@@ -94,37 +67,50 @@ abstract class BaseLvBindingMultiLayoutAdapter<T>(context: Context) :
     }
 
     /**
-     * 每个convert view都会调用此方法，获得当前所需要的view样式
+     * RecyclerView知道了每一个子项
      */
-    override fun getItemViewType(position: Int): Int {
-        return itemViewType(position)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        val binding: vb = DataBindingUtil.inflate(
+            LayoutInflater.from(context),
+            getLayoutId(),
+            parent,
+            false
+        )
+        return BaseBindingViewHolder(binding.root)
+
     }
 
     /**
-     * 多少种布局样式
+     * 让每个子项得以显示正确的数据。
      */
-    override fun getViewTypeCount(): Int {
-        return viewTypeCount()
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        val binding = DataBindingUtil.getBinding<vb>(holder.itemView)
+        /**
+         * 绑定item
+         */
+        binding?.apply {
+            this.setVariable(variableId(), mData[position])
+            this.executePendingBindings()
+        }
     }
+
+
+    override fun getItemCount(): Int = if (mData.isNullOrEmpty()) 0 else mData.size
 
     /**
      * 布局id
      */
     @LayoutRes
-    protected abstract fun getLayoutId(viewTypeIndex: Int): Int
+    protected abstract fun getLayoutId(): Int
 
     /**
      * data 标签的变量标识
      */
-    protected abstract fun variableId(viewTypeIndex: Int): Int
+    protected abstract fun variableId(): Int
 
-    /**
-     * 多少种布局样式
-     */
-    protected abstract fun viewTypeCount(): Int
-
-    /**
-     * 根据索引返回使用哪种样式索引
-     */
-    protected abstract fun itemViewType(position: Int): Int
 }
+
+/**
+ * 把ViewHolder提出来，这样所有Adapter都可以使用而无需在每个Adapter中都声明一个ViewHolder
+ */
+class BaseBindingViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView!!)

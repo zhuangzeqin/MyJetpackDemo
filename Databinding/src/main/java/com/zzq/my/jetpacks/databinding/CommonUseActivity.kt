@@ -6,12 +6,14 @@ import androidx.databinding.DataBindingUtil
 import com.zzq.my.jetpacks.adapter.LVCommonUserAdapter
 import com.zzq.my.jetpacks.adapter.LVCommonUserMultiAdapter
 import com.zzq.my.jetpacks.adapter.ListviewAdapterTest
+import com.zzq.my.jetpacks.adapter.RVCommonUserAdapter
 import com.zzq.my.jetpacks.bean.CommonUser
 import com.zzq.my.jetpacks.bean.MultiMsg
 import com.zzq.my.jetpacks.databinding.databinding.ActivityCommonUseBinding
 
 class CommonUseActivity : AppCompatActivity() {
     private lateinit var ladapter: LVCommonUserAdapter
+    private lateinit var rvadapter: RVCommonUserAdapter
     private lateinit var ladapterMulti: LVCommonUserMultiAdapter
     private var userlist:MutableList<CommonUser>? =  null
     private var multiMsgList:MutableList<MultiMsg>? =  null
@@ -23,7 +25,8 @@ class CommonUseActivity : AppCompatActivity() {
             R.layout.activity_common_use
         )
 //        singAdapter(binding)
-        singAdapter2(binding)
+//        singAdapter2(binding)
+        singAdapter3(binding)
     }
 
     private fun singAdapter(binding: ActivityCommonUseBinding) {
@@ -44,5 +47,15 @@ class CommonUseActivity : AppCompatActivity() {
         ladapterMulti = LVCommonUserMultiAdapter(this)
         ladapterMulti.setList(multiMsgList)
         binding.ladapterMultiAdapter = ladapterMulti
+    }
+
+    private fun singAdapter3(binding: ActivityCommonUseBinding) {
+        userlist = mutableListOf()
+        for (i in 0..20) {
+            userlist!!.add(CommonUser("zzq${i}", 32, 1, "我是一个合格的程序员$i"))
+        }
+        rvadapter = RVCommonUserAdapter(this)
+        rvadapter.setList(userlist)
+        binding.radapter = rvadapter
     }
 }
