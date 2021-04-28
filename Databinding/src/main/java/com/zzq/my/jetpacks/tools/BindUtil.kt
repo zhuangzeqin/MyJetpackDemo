@@ -1,8 +1,11 @@
 package com.zzq.my.jetpacks.tools
 
 import android.content.Context
+import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
+import com.zzq.my.jetpacks.databinding.BuildConfig
 
 /**
  * 描述：class describe
@@ -58,5 +61,65 @@ object BindHelp {
     @JvmStatic
     fun staticClick(view: View) {
         Toast.makeText(view.context, "静态函数引用", Toast.LENGTH_SHORT).show()
+        var str  = "静态函数引用"
+        val length = str?.length?: 0// 如果 ?: 左边的表达式不为null，则返回左边表达式的值，否则返回?: 右边表达式的值。
+        getValueSafely {
+            val value = 1 / 2
+            debugMessage("staticClick") { value.asType<String>()
+
+            }
+        }
     }
 }
+
+/**
+ * 安全的获取值的信息，其过程中发生异常会自动处理，返回null
+ * block 取值操作，可能发生异常 返回null
+ */
+inline fun <T> getValueSafely(block: () -> T?): T? {
+    return try {
+        block()
+    } catch (ex: Exception) {
+        ex.printStackTrace()
+        null
+    }
+}
+
+/**
+ * Kotlin日志输出方法 封装
+ * 使用inline修饰高阶函数（参数为函数时）
+ * 由于采用了 inline 处理 会把 debugMessage 提取到调用处
+ */
+inline fun debugMessage(tag: String = "debugMessage", lazyMessage: () -> Any?) {
+    if (BuildConfig.DEBUG) {//DEBUG时才执行，否则不执行
+        Log.d(tag, lazyMessage().toString())
+    }
+}
+
+/**
+ * 类型转换
+ * 使用Kotlin Reified 让泛型更简单安全
+ * 使用reified很简单，主要分为两步
+    在泛型类型前面增加 reified
+    在方法前面增加 inline（必需的）
+ */
+inline fun <reified T> Any.asType(): T? {
+    return if (this is T) this else null
+}
+
+/**
+ * Bundle 扩展函数
+ */
+inline fun<reified T> Bundle.plus(key:String,value: T) {
+    when(value)
+    {
+        is Long-> putLong(key,value)
+        is String->putString(key,value)
+        is Int->putInt(key,value)
+        is Double->putDouble(key,value)
+        is Char->putChar(key,value)
+    }
+}
+
+
+
