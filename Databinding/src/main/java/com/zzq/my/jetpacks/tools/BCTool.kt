@@ -3,6 +3,8 @@ package com.zzq.my.jetpacks.tools
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import androidx.annotation.DrawableRes
+import androidx.annotation.Nullable
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.databinding.BindingAdapter
 import androidx.databinding.BindingConversion
@@ -10,7 +12,7 @@ import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
-import com.zzq.my.jetpacks.databinding.R
+import org.jetbrains.annotations.NotNull
 
 /**
  * 描述： Binding高级用法中，辅助工具类，演示@BindingConversion，@bindadapter等
@@ -34,9 +36,23 @@ object BCTool {
             "red" -> ColorDrawable(Color.RED)//红色
             "green" -> ColorDrawable(Color.GREEN)//绿色
             "blue" -> ColorDrawable(Color.BLUE)//蓝色
+            "white" -> ColorDrawable(Color.WHITE)//白色
             else -> ColorDrawable(Color.YELLOW)//黄色
         }
     }
+    //转换的str->
+    @BindingConversion
+    @JvmStatic
+    fun convertStringToColor(str: String): Int {
+        return when(str)
+        {
+            "red"-> Color.parseColor("#FF4081")
+            "blue"-> Color.parseColor("#3F51B5")
+            "white"-> Color.parseColor("#ffffff")
+            else -> Color.parseColor("#344567")
+        }
+    }
+
     /**
      * 用于appCompatImageView的自定义属性，bind:imgSrc，命名空间bind:可以省略，也就是写作 imgSrc亦可。可以用于加载url的图片
      * 函数名也是随意，主要是value的声明，就是新加的属性名了，可以多个属性同用，并配置是否必须一起作用
@@ -44,12 +60,14 @@ object BCTool {
      * todo 加载网络图片，需要网络权限，别忘了
      */
     @JvmStatic
-    @BindingAdapter(value = ["bind:imgSrc"] ,requireAll = false)
-    fun urlImageSrc(view: AppCompatImageView, url: String) {
+    @BindingAdapter(value = ["bind:imgSrc", "bind:placeholder"], requireAll = false)
+    fun loadImg(@NotNull view: AppCompatImageView, @NotNull url: String,  placeholder: Drawable) {
         Glide.with(view)
             .load(url)
-            .placeholder(R.drawable.img_banner)
-            .centerInside()
+//            .placeholder(R.drawable.img_banner)
+            .placeholder(placeholder)
+            .error(placeholder)
+//            .centerInside()
             .into(view)
     }
 

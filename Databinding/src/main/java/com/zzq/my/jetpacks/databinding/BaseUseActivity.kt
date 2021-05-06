@@ -3,6 +3,7 @@ package com.zzq.my.jetpacks.databinding
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.databinding.DataBindingUtil
 import com.zzq.my.jetpacks.databinding.databinding.ActivityBaseUseBinding
@@ -38,7 +39,7 @@ class BaseUseActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val stringJoiner = StringJoiner(",")
+//        val stringJoiner = StringJoiner(",")
         //Fragment 获取方式  xxxbinding.inflater()
         val binding = DataBindingUtil.setContentView<ActivityBaseUseBinding>(this, R.layout.activity_base_use)
         binding.apply {

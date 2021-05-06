@@ -20,6 +20,8 @@ android {
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+//    implementation 'com.github.xiaohaozi9825:adapter_plus:1.9'
+//    implementation 'com.github.xiaohaozi9825:android_utils:1.10'
 
 //    便于统一管理，都放在了dependencies.gradle文件内了，这里文件顶部有apply form
 //	其实可以每个模块仅仅添加各自所需要的依赖库，不过那么比较分散，不便管理

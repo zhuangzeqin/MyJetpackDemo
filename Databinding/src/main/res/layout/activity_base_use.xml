@@ -67,6 +67,7 @@
     </data>
     <!--UI layout-->
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:bind="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -141,6 +142,34 @@
             android:layout_margin="5dp"
             android:text="@{@plurals/str_numbers(5)}"
             tools:text="str的格式化" />
+        <!--1、转换，也就是将原有不支持的属性，转换为支持，兼容，如background的属性不能设置普通string，
+                这里可以通过@BindingConversion的静态函数，来适配-->
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@{`red`}"
+            android:textColor="@{`white`}"
+            android:text="这个文案的背景色属性，就是通过converters转换才行的"
+            />
+
+        todo 注意text不能为Int值，否则报错。int要转为string,使用拼接，或者valueOf，toString都可以。-->
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="2dp"
+            android:text='@{age>30? "老腊肉":"小鲜肉" }'
+            tools:text="title text" />
+
+
+        <androidx.appcompat.widget.AppCompatImageView
+            bind:imgSrc='@{"https://www.baidu.com/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.pngaaa"}'
+            bind:placeholder='@{@drawable/img_banner}'
+            android:id="@+id/iv_image_advance"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+           />
+
         <!--8、使用静态函数值,分别是java方式，kotlin的两种方式-->
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"

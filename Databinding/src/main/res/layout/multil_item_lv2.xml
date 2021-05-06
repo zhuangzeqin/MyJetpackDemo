@@ -13,20 +13,22 @@
 		android:background="@android:color/holo_orange_light"
 		android:layout_marginTop="1dp"
 		android:orientation="horizontal"
-		android:padding="5dp">
+		android:padding="10dp">
 
 		<androidx.appcompat.widget.AppCompatTextView
-			android:layout_width="30dp"
+			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:gravity="center"
-			android:text="@{MultiMsgMeta.meta.status+``}"
+			android:padding="10dp"
+			android:text="@{`状态:`+MultiMsgMeta.meta.status+``}"
 			tools:text="状态" />
 		<!--注意，这里age、sex是Int类型，所以要转为string，而且这类错误，不易发现-->
 		<androidx.appcompat.widget.AppCompatTextView
-			android:layout_width="30dp"
+			android:layout_width="wrap_content"
+			android:padding="10dp"
 			android:layout_height="wrap_content"
 			android:gravity="center"
-			android:text="@{MultiMsgMeta.meta.msg+``}"
+			android:text="@{`消息:`+MultiMsgMeta.meta.msg+``}"
 			tools:text="消息" />
 	</LinearLayout>
 </layout>
