@@ -1,7 +1,10 @@
 package com.zzq.my.jetpacks.databinding
 
 import android.content.Intent
+import android.content.res.Resources
+import android.os.Build
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -26,15 +29,16 @@ import com.zzq.my.jetpacks.databinding.databinding.ActivityBindingBinding
   * ----------------------------------------------------------------
   * ================================================
   */
-class BindingActivity:AppCompatActivity() {
+class BindingActivity : AppCompatActivity() {
     private lateinit var binding: ActivityBindingBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //是要的是Viewbinding 方式 获取布局
-        binding =  ActivityBindingBinding.inflate(layoutInflater)
+        binding = ActivityBindingBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setNotice()
     }
+
     /**
      * 跳转到 DataBinding的基础用法演示界面
      * 这里是响应xml中Button的点击事件，使用onClick配置属性的方式
@@ -80,5 +84,41 @@ DataBinding使用注意事项点:
 10、函数调用的多种写法，无参、有参、context，以及静态函数调用（针对对象，而非类）。
 		""".trimIndent()
     }
+
+    override fun getResources(): Resources {
+        var resources = super.getResources()
+        val newConfig = resources.configuration
+        val displayMetrics = resources.displayMetrics
+        if (resources != null && newConfig.fontScale != 1F) {
+            newConfig.fontScale = 1F
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                val configurationContext = createConfigurationContext(newConfig)
+                resources = configurationContext.resources
+                displayMetrics.scaledDensity = displayMetrics.density * newConfig.fontScale
+            } else {
+                resources.updateConfiguration(newConfig, displayMetrics);
+            }
+        }
+        return resources
+    }
+
+    //    @Override
+//    public Resources getResources() {
+//        Resources resources = super.getResources();
+//        Configuration newConfig = resources.getConfiguration();
+//        DisplayMetrics displayMetrics = resources.getDisplayMetrics();
+//        if (resources != null && newConfig.fontScale != 1) {
+//            newConfig.fontScale = 1;
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+//                Context configurationContext = createConfigurationContext(newConfig);
+//                resources = configurationContext.getResources();
+//                displayMetrics.scaledDensity = displayMetrics.density * newConfig.fontScale;
+//            } else {
+//                resources.updateConfiguration(newConfig, displayMetrics);
+//            }
+//        }
+//        return resources;
+//    }
+
 
 }

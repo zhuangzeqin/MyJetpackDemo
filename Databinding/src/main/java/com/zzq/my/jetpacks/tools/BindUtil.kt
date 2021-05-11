@@ -1,11 +1,17 @@
 package com.zzq.my.jetpacks.tools
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import com.google.gson.Gson
 import com.zzq.my.jetpacks.databinding.BuildConfig
+import com.zzq.my.jetpacks.databinding.R
 
 /**
  * 描述：class describe
@@ -61,11 +67,12 @@ object BindHelp {
     @JvmStatic
     fun staticClick(view: View) {
         Toast.makeText(view.context, "静态函数引用", Toast.LENGTH_SHORT).show()
-        var str  = "静态函数引用"
-        val length = str?.length?: 0// 如果 ?: 左边的表达式不为null，则返回左边表达式的值，否则返回?: 右边表达式的值。
+        var str = "静态函数引用"
+        val length = str?.length ?: 0// 如果 ?: 左边的表达式不为null，则返回左边表达式的值，否则返回?: 右边表达式的值。
         getValueSafely {
             val value = 1 / 2
-            debugMessage("staticClick") { value.asType<String>()
+            debugMessage("staticClick") {
+                value.asType<String>()
 
             }
         }
@@ -100,8 +107,8 @@ inline fun debugMessage(tag: String = "debugMessage", lazyMessage: () -> Any?) {
  * 类型转换
  * 使用Kotlin Reified 让泛型更简单安全
  * 使用reified很简单，主要分为两步
-    在泛型类型前面增加 reified
-    在方法前面增加 inline（必需的）
+在泛型类型前面增加 reified
+在方法前面增加 inline（必需的）
  */
 inline fun <reified T> Any.asType(): T? {
     return if (this is T) this else null
@@ -110,16 +117,81 @@ inline fun <reified T> Any.asType(): T? {
 /**
  * Bundle 扩展函数
  */
-inline fun<reified T> Bundle.plus(key:String,value: T) {
-    when(value)
-    {
-        is Long-> putLong(key,value)
-        is String->putString(key,value)
-        is Int->putInt(key,value)
-        is Double->putDouble(key,value)
-        is Char->putChar(key,value)
+inline fun <reified T> Bundle.plus(key: String, value: T) {
+    when (value) {
+        is Long -> putLong(key, value)
+        is String -> putString(key, value)
+        is Int -> putInt(key, value)
+        is Double -> putDouble(key, value)
+        is Char -> putChar(key, value)
     }
 }
 
+// Activity related 提取 Bundle 参数
+//val firstName by getValue<String>("firstName") // String?
+//val lastName by getValueNonNull<String>("lastName") // String
+inline fun <reified T : Any> Activity.getValue(
+    lable: String, defaultvalue: T? = null
+) = lazy {
+    val value = intent?.extras?.get(lable)
+    if (value is T) value else defaultvalue
+}
+
+inline fun <reified T : Any> Activity.getValueNonNull(
+    lable: String, defaultvalue: T? = null
+) = lazy {
+    val value = intent?.extras?.get(lable)
+    requireNotNull((if (value is T) value else defaultvalue)) { lable }
+}
+
+// Fragment related 提取 Bundle 参数
+inline fun <reified T : Any> Fragment.getValue(lable: String, defaultvalue: T? = null) = lazy {
+    val value = arguments?.get(lable)
+    if (value is T) value else defaultvalue
+}
+
+inline fun <reified T : Any> Fragment.getValueNonNull(lable: String, defaultvalue: T? = null) =
+    lazy {
+        val value = arguments?.get(lable)
+        requireNotNull(if (value is T) value else defaultvalue) { lable }
+    }
+
+//Extensions
+//fun Int.asColor() = ContextCompat.getColor(ApplicationCalss.instance, this)
+//fun Int.asDrawable() = ContextCompat.getDrawable(MavrikApplication.instance, this)
+
+//Usage at call site
+//val color = R.color.dark_blie.asColor()
+//val drawable = R.drawable.launcher.asDrawable()
+
+
+fun View.show() {
+    this.visibility = View.VISIBLE
+}
+
+fun View.hide() {
+    this.visibility = View.INVISIBLE
+}
+
+fun View.remove() {
+    this.visibility = View.GONE
+}
+
+//Extension function
+fun String?.valid() : Boolean =
+    this != null && !this.equals("null", true)
+            && this.trim().isNotEmpty()
+
+// Function
+inline fun <reified T : Activity> Activity.startActivity(context: Context) {
+    startActivity(Intent(context, T::class.java))
+}
+
+inline fun <reified T> Gson.fromJson(json: String) =
+    fromJson(json, T::class.java)
+
+
+// Usage at call site
+//if(data.valid())
 
 
