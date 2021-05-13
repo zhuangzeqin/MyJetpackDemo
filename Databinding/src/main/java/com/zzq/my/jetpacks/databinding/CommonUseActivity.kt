@@ -7,6 +7,8 @@ import com.zzq.my.jetpacks.adapter.*
 import com.zzq.my.jetpacks.bean.CommonUser
 import com.zzq.my.jetpacks.bean.MultiMsg
 import com.zzq.my.jetpacks.databinding.databinding.ActivityCommonUseBinding
+import com.zzq.my.jetpacks.tools.Toast
+import com.zzq.my.jetpacks.tools.toastV
 
 class CommonUseActivity : AppCompatActivity() {
     private lateinit var ladapter: LVCommonUserAdapter
@@ -23,8 +25,8 @@ class CommonUseActivity : AppCompatActivity() {
             R.layout.activity_common_use
         )
 //        singAdapter(binding)
-//        singAdapter2(binding)
-        singAdapter3(binding)
+        singAdapter2(binding)
+//        singAdapter3(binding)
         singAdapter4(binding)
     }
 
@@ -46,6 +48,12 @@ class CommonUseActivity : AppCompatActivity() {
         ladapterMulti = LVCommonUserMultiAdapter(this)
         ladapterMulti.setList(multiMsgList)
         binding.ladapterMultiAdapter = ladapterMulti
+        binding.lvCommonlist.setOnItemClickListener { adapterView, view, i, l ->
+            val item = adapterView.adapter.getItem(i)
+            item.Toast(this){
+               item
+            }
+        }
     }
 
     private fun singAdapter3(binding: ActivityCommonUseBinding) {
@@ -53,7 +61,18 @@ class CommonUseActivity : AppCompatActivity() {
         for (i in 0..20) {
             userlist!!.add(CommonUser("zzq${i}", 32, 1, "我是一个合格的程序员$i"))
         }
-        rvadapter = RVCommonUserAdapter(this)
+        rvadapter = RVCommonUserAdapter(this){
+            itemClickCallBack { view, item, position ->
+                item.Toast(context = this@CommonUseActivity){
+                    item
+                }
+            }
+            itemLongCallBack { view, item, position ->
+                item.Toast(context = this@CommonUseActivity){
+                    item
+                }
+            }
+        }
         rvadapter.setList(userlist)
         binding.radapter = rvadapter
     }
@@ -64,7 +83,18 @@ class CommonUseActivity : AppCompatActivity() {
         for (i in 0..20) {
             multiMsgList!!.add(MultiMsg(MultiMsg.Message(i, "zzq$i","1", "150$i"),MultiMsg.Meta("消息$i",i)))
         }
-        radapterMulti = RVCommonUserMultiAdapter(this)
+        radapterMulti = RVCommonUserMultiAdapter(this){
+            itemClickCallBack { view, item, position ->
+                item.Toast(context = this@CommonUseActivity){
+                    item
+                }
+            }
+            itemLongCallBack { view, item, position ->
+                item.Toast(context = this@CommonUseActivity){
+                    item
+                }
+            }
+        }
         radapterMulti.setList(multiMsgList)
         binding.radapterMultiAdapter = radapterMulti
     }

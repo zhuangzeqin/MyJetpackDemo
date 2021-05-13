@@ -9,6 +9,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.zzq.my.jetpacks.databinding.databinding.ActivityBindingBinding
+import com.zzq.my.jetpacks.tools.ConfigBuilder
 
 /*
   * ================================================
@@ -54,6 +55,11 @@ class BindingActivity : AppCompatActivity() {
     fun commonUse(v: View) {
         //如果this表示不明晰的时候，可以@指定类名，即可明确对象指引
         startActivity(Intent(this@BindingActivity, CommonUseActivity::class.java))
+        //比如这个全局环境配置
+        ConfigBuilder(){
+//            setTag("Test")
+//            setBaseUrl("http://www.baidu.com")
+        }.startConfig()
     }
 
     /**

@@ -182,6 +182,10 @@ fun String?.valid() : Boolean =
     this != null && !this.equals("null", true)
             && this.trim().isNotEmpty()
 
+inline fun Any.Toast(context: Context,block: () -> Any?){
+    Toast.makeText(context, block.invoke().toString() ,Toast.LENGTH_SHORT).show()
+}
+
 // Function
 inline fun <reified T : Activity> Activity.startActivity(context: Context) {
     startActivity(Intent(context, T::class.java))

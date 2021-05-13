@@ -12,7 +12,7 @@ import com.zzq.my.jetpacks.databinding.R
  * 邮箱：zzq@eeepay.cn
  * 备注:
  */
-class RVCommonUserMultiAdapter(context: Context):BaseRvBindingMultiLayoutAdapter<MultiMsg>(context) {
+class RVCommonUserMultiAdapter(context: Context,block:(OnItemListenerImpl<MultiMsg>.()->Unit)?=null):BaseRvBindingMultiLayoutAdapter<MultiMsg>(context,block) {
     /**
      * 布局id
      */

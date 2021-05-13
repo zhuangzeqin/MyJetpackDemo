@@ -25,8 +25,8 @@ import com.zzq.my.jetpacks.databinding.databinding.ItemLvBinding
   * ----------------------------------------------------------------
   * ================================================
   */
-class RVCommonUserAdapter(context: Context) : BaseRvBindingAdapter<CommonUser, ItemLvBinding>(
-    context
+class RVCommonUserAdapter(context: Context,block:(OnItemListenerImpl<CommonUser>.()->Unit)?=null) : BaseRvBindingAdapter<CommonUser, ItemLvBinding>(
+    context,block
 ) {
     /**
      * 布局id

@@ -10,16 +10,22 @@ import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 
 /**
- * 描述：class describe
+ * 描述：rv 多布局适配器基类封装
  * 作者：zhuangzeqin
  * 时间: 2021/4/28-18:02
  * 邮箱：zzq@eeepay.cn
  * 备注:
  */
-abstract class BaseRvBindingMultiLayoutAdapter<T>(context: Context): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+abstract class BaseRvBindingMultiLayoutAdapter<T>(context: Context,block:(OnItemListenerImpl<T>.()->Unit)?=null): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     //数据的集合
     private var mData: MutableList<T> = mutableListOf()
     private val mLayoutInflater: LayoutInflater by lazy { LayoutInflater.from(context) }
+    //实例化回调接口实现类---延迟初始化 而且当且仅当变量被第一次调用的时候，委托方法才会执行
+    private val callBack:OnItemListenerImpl<T> by lazy { OnItemListenerImpl<T>() }
+    init {
+        //将参数内的回调函数与实例化对象绑定
+        block?.let { callBack.it() }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
 //        viewType 可以根据来判断不同的viewHolder
@@ -39,9 +45,17 @@ abstract class BaseRvBindingMultiLayoutAdapter<T>(context: Context): RecyclerVie
         /**
          * 绑定item
          */
+        val dataItem = mData[position]
         binding?.apply {
-            this.setVariable(variableId(getItemViewType(position)), mData[position])
+            this.setVariable(variableId(getItemViewType(position)), dataItem)
             this.executePendingBindings()
+        }
+        holder.itemView.run {
+            //业务层实现点击事件
+            setOnClickListener { callBack.onItemClickBiz(it, dataItem, position)}
+            //业务层实现长按事件
+            setOnLongClickListener {  callBack.onItemLongClickBiz(it, dataItem, position)
+                true}
         }
     }
 

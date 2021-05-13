@@ -29,8 +29,19 @@ import androidx.recyclerview.widget.RecyclerView
   * ----------------------------------------------------------------
   * ================================================
   */
-abstract class BaseRvBindingAdapter<T, vb : ViewDataBinding>(var context: Context) :
+abstract class BaseRvBindingAdapter<T, vb : ViewDataBinding>(
+    var context: Context,
+    block: (OnItemListenerImpl<T>.() -> Unit)? = null
+) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    //实例化回调接口实现类---延迟初始化 而且当且仅当变量被第一次调用的时候，委托方法才会执行
+    private val callBack: OnItemListenerImpl<T> by lazy { OnItemListenerImpl<T>() }
+
+    init {
+        //将参数内的回调函数与实例化对象绑定
+        block?.let { callBack.it() }
+    }
+
     //数据的集合
     private var mData: MutableList<T> = mutableListOf()
     open fun add(t: T?) {
@@ -85,12 +96,21 @@ abstract class BaseRvBindingAdapter<T, vb : ViewDataBinding>(var context: Contex
      */
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val binding = DataBindingUtil.getBinding<vb>(holder.itemView)
+
         /**
          * 绑定item
          */
+        val dataItem = mData[position]
         binding?.apply {
-            this.setVariable(variableId(), mData[position])
+            this.setVariable(variableId(), dataItem)
             this.executePendingBindings()
+        }
+        holder.itemView.run {
+            //业务层实现点击事件
+            setOnClickListener { callBack.onItemClickBiz(it, dataItem, position)}
+            //业务层实现长按事件
+            setOnLongClickListener {  callBack.onItemLongClickBiz(it, dataItem, position)
+                true}
         }
     }
 
