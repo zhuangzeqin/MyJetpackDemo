@@ -15,6 +15,10 @@ android {
         }
     }
 
+    dexOptions {
+        incremental true
+    }
+
 }
 
 dependencies {

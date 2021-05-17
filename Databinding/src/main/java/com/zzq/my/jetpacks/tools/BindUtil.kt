@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -193,6 +194,38 @@ inline fun <reified T : Activity> Activity.startActivity(context: Context) {
 
 inline fun <reified T> Gson.fromJson(json: String) =
     fromJson(json, T::class.java)
+
+/**
+ * 泛型实例化 带参的构造函数
+ */
+inline fun <reified T: Any> new(vararg params: Any): T {
+    val clz = T::class.java
+    val paramTypes = params.map { it::class.java }.toTypedArray()
+    val mCreate = clz.getDeclaredConstructor(*paramTypes)
+    mCreate. isAccessible = true
+    return mCreate. newInstance(* params)
+}
+/**
+ * 泛型实例化 无参的构造函数
+ */
+inline fun <reified T: Any> new(): T {
+    val clz = T::class.java
+    val mCreate = clz.getDeclaredConstructor()
+    mCreate. isAccessible = true
+    return mCreate. newInstance()
+}
+
+inline fun <reified T: Any> new2(vararg params: Any) =
+    T::class.java.getDeclaredConstructor(*params.map { it::class.java }.toTypedArray()).apply { isAccessible = true }.newInstance(*params)
+
+//fun button(text: String, block: Button.() -> Unit) = new<Button>(text).also(block)
+//
+//fun main(args: Array<String>) {
+//    button("Click") {
+////        addActionListener { ... }
+//    }
+//}
+
 
 
 // Usage at call site
