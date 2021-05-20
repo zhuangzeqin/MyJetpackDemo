@@ -4,11 +4,11 @@ buildscript {
     ext {
         //kotlin 版本号
         kotlin_version = '1.5.0'
-        compile_sdk_version = 29
-        build_tools_version = '30.0.1'
+        compile_sdk_version = 30
+        build_tools_version = '30.0.3'
         //最低sdk 版本号21  5.0
         min_sdk_verion = 21
-        target_sdk_version = 29
+        target_sdk_version = 30
         //版本号
         lib_version_code = 1
         lib_version_name = "1.0.0"
@@ -18,18 +18,19 @@ buildscript {
     repositories {
         google()
         // 阿里云云效仓库：https://maven.aliyun.com/mvn/guide
-//        maven { url 'https://maven.aliyun.com/repository/jcenter' }
+        maven { url 'https://maven.aliyun.com/repository/public' }
 //        maven { url 'https://maven.aliyun.com/repository/google' }
         // 华为开源镜像：https://mirrors.huaweicloud.com
 //        maven { url 'https://repo.huaweicloud.com/repository/maven' }
         // JitPack 远程仓库：https://jitpack.io
-//        maven { url 'https://jitpack.io' }
+        maven { url 'https://jitpack.io' }
         // MavenCentral 远程仓库：https://mvnrepository.com
-        jcenter()
+//        jcenter()
         mavenCentral()
+
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.2.0'
+        classpath 'com.android.tools.build:gradle:4.2.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$navigation_version"//和navigation版本号一致
         // NOTE: Do not place your application dependencies here; they belong
@@ -42,14 +43,14 @@ allprojects {
     repositories {
         google()
         // 阿里云云效仓库：https://maven.aliyun.com/mvn/guide
-//        maven { url 'https://maven.aliyun.com/repository/jcenter' }
+        maven { url 'https://maven.aliyun.com/repository/public' }
 //        maven { url 'https://maven.aliyun.com/repository/google' }
         // 华为开源镜像：https://mirrors.huaweicloud.com
 //        maven { url 'https://repo.huaweicloud.com/repository/maven' }
         // JitPack 远程仓库：https://jitpack.io
-//        maven { url 'https://jitpack.io' }
+        maven { url 'https://jitpack.io' }
         // MavenCentral 远程仓库：https://mvnrepository.com
-        jcenter()
+//        jcenter()
         mavenCentral()
     }
 }

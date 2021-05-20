@@ -39,4 +39,25 @@ public class BindTool {
     public static void toast(View view) {
         Toast.makeText(view.getContext(), "普通点击view显示toast", Toast.LENGTH_SHORT).show();
     }
+
+    /**
+     * 拓     展    资    源
+     * "\u62d3\u5c55\u8d44\u6e90"转中文"拓展资源"
+     *
+     * @param utfString "\u62d3\u5c55\u8d44\u6e90"
+     * @return "拓展资源"
+     */
+    public static String convert(String utfString) {
+        StringBuilder sb = new StringBuilder();
+        int i;
+        int pos = 0;
+        while ((i = utfString.indexOf("\\u", pos)) != -1) {
+            sb.append(utfString, pos, i);
+            if (i + 5 < utfString.length()) {
+                pos = i + 6;
+                sb.append((char) Integer.parseInt(utfString.substring(i + 2, i + 6), 16));
+            }
+        }
+        return sb.toString();
+    }
 }

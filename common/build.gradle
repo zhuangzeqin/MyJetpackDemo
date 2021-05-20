@@ -1,0 +1,21 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+}
+//引用dependencies中的配置
+apply from: '../dependencies.gradle'
+android {
+    defaultConfig {
+
+    }
+}
+
+dependencies {
+
+//    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    //coil
+    implementation("io.coil-kt:coil:0.13.0")
+    //utils
+    api 'com.blankj:utilcodex:1.29.0'
+
+}
