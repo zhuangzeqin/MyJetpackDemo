@@ -23,4 +23,6 @@ dependencies {
         implementation project(path: ':Databinding')
     }
 
+    implementation project(path: ':common')
+
 }
