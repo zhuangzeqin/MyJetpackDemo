@@ -15,5 +15,5 @@ import retrofit2.http.POST
 interface ApiInterfaces {
     //登录接口
     @POST("agentApi2/login/")
-    suspend fun reqLonin(@Body parameters: Map<String, Any>): BaseResponse<LoginInfo.DataBean>
+    suspend fun reqLonin(@Body parameters: Map<String, String>): BaseResponse<LoginInfo.DataBean>
 }

@@ -4,11 +4,11 @@ import android.annotation.SuppressLint
 import android.content.pm.PackageManager.NameNotFoundException
 import android.os.Build
 import android.provider.Settings
-import com.blankj.utilcode.util.EncryptUtils
 import com.blankj.utilcode.util.Utils
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.zzq.my.jetpacks.common.bean.AppDeviceInfo
+import com.zzq.my.jetpacks.common.utils.Md5
 import com.zzq.my.jetpacks.common.utils.SpUtils
 import okhttp3.FormBody
 import okhttp3.Interceptor
@@ -48,6 +48,7 @@ class RequestInterceptor : Interceptor {
     private val KEY_VALUE = "key=46940880d9f79f27bb7f85ca67102bfdylkj@@agentapi2#$$^&pretty"
     override fun intercept(chain: Interceptor.Chain): Response {
         val originRequest = chain.request()
+        val rootMap = TreeMap<String, String>()
         // 公共请求参数
         val attachHeaders = mutableListOf<Pair<String, String>>(
 //            "appid" to NET_CONFIG_APP_ID,
@@ -66,7 +67,8 @@ class RequestInterceptor : Interceptor {
         //get的请求，参数
         if (originRequest.method == "GET") {
             originRequest.url.queryParameterNames.forEach { key ->
-                signHeaders.add(key to (originRequest.url.queryParameter(key) ?: ""))
+//                signHeaders.add(key to (originRequest.url.queryParameter(key) ?: ""))
+                rootMap[key] = originRequest.url.queryParameter(key) ?: ""
             }
         }
         val requestBody = originRequest.body
@@ -74,7 +76,8 @@ class RequestInterceptor : Interceptor {
             // post请求需要将内部的字段遍历出来参与sign计算
             if (requestBody is FormBody) {
                 for (i in 0 until requestBody.size) {
-                    signHeaders.add(requestBody.encodedName(i) to requestBody.encodedValue(i))
+//                    signHeaders.add(requestBody.encodedName(i) to requestBody.encodedValue(i))
+                    rootMap[requestBody.encodedName(i)] = requestBody.encodedValue(i)
                 }
             }
             // json形式的body，将json转成Map遍历
@@ -86,23 +89,33 @@ class RequestInterceptor : Interceptor {
                 }.onSuccess {
                     val map = gson.fromJson<Map<String, Any>>(it, mapType)
                     map.forEach { p ->
-                        signHeaders.add(p.key to p.value.toString())
+//                        signHeaders.add(p.key to p.value.toString())
+                        rootMap[p.key] = p.value.toString()
                     }
                 }
             }
         }
 
         val timestamp = System.currentTimeMillis().toString() //时间戳
-        signHeaders.add(Pair("timestamp", timestamp))
+//        signHeaders.add(Pair("timestamp", timestamp))
+        rootMap.put("timestamp",timestamp)
         val loginToken = SpUtils.getString("token", "")//登录的token
-        signHeaders.add(Pair("loginToken", loginToken.toString()))
+//        signHeaders.add(Pair("loginToken", loginToken.toString()))
+        rootMap.put("loginToken", loginToken.toString())
+        //1 遍历map key拼接  key=value&
+        //2 value 空的不拼接
+        var signValue = ""
+        rootMap.forEach{
+                p-> signValue = signValue + p.key + "=" + p.value + "&" }
+        signValue.plus("&appkey=$KEY_VALUE")
         // 加密的请求参数按照Ascii排序 用&拼接加上"&appkey=appKeyValue"
-        val signValue = signHeaders
-            .sortedBy { it.first }
-            .joinToString("&") { "${it.first}=${it.second}" }
-            .plus("&appkey=$KEY_VALUE")
+//        val signValue = signHeaders
+//            .sortedBy { it.first }
+//            .joinToString("&") { "${it.first}=${it.second}" }
+//            .plus("&appkey=$KEY_VALUE")
         //最后对拼接完成的字符串进行md5签名,然后以sign为key放到请求body中
-        val sign = EncryptUtils.encryptMD5ToString(signValue)
+//        val sign = EncryptUtils.encryptMD5ToString(signValue)
+        val sign = Md5.encode(signValue)
         //重新组装 装换成json字符串
         val appDeviceInfo = getAppDeviceInfo(sign, timestamp)
         val newRequest = originRequest.newBuilder()

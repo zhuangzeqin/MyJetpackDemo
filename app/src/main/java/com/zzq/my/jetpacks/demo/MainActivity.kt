@@ -1,18 +1,35 @@
 package com.zzq.my.jetpacks.demo
 
 import android.os.Bundle
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.blankj.utilcode.util.LogUtils
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.zzq.my.jetpacks.common.bean.LoginInfo
+import com.zzq.my.jetpacks.common.net.base.observe
+import com.zzq.my.jetpacks.demo.login.LoginModel
 
 class MainActivity : AppCompatActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        val loginModel = ViewModelProvider(
+            this,
+            ViewModelProvider.NewInstanceFactory()
+        ).get(LoginModel::class.java)
+
+        val  parameters = mutableMapOf("userName" to "19000000021","password" to "abc888888","agentOem" to "200010")
+        loginModel.reqLogin(parameters)
+        loginModel.banners.observe(this,{dataBean: LoginInfo.DataBean? ->
+
+        },{i: Int, s: String? ->
+
+        })
+
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
 
         val navController = findNavController(R.id.nav_host_fragment)

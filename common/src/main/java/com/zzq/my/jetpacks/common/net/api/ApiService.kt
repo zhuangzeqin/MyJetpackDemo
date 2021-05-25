@@ -13,5 +13,5 @@ object ApiService {
     //延迟初始化
     private val mInterfaces by lazy { RetrofitClient.getInstance().create(ApiInterfaces::class.java) }
     //登录api 请求接口
-    suspend fun reqLogin(parameters: Map<String, Any>) = mInterfaces.reqLonin(parameters)
+    suspend fun reqLogin(parameters: Map<String, String>) = mInterfaces.reqLonin(parameters)
 }

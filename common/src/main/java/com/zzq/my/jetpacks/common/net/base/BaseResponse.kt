@@ -31,4 +31,29 @@ data class BaseResponse<T>(
     val data: T,//泛型T 数据
     val count: Int,//数据数量
     val success: Boolean//是否成功； true 代表成功； false 代表不成功
-): Serializable
+) : IBaseResponse<T>, Serializable {
+    /**
+     * 请求响应码
+     */
+    override fun code(): Int = code
+
+    /**
+     * 请求提示msg
+     */
+    override fun msg(): String = message
+
+    /**
+     * 请求响应数据
+     */
+    override fun data(): T = data
+
+    /**
+     * 是否请求成功
+     */
+    override fun isSuccess(): Boolean = success
+
+    /**
+     * 请求响应数据数量
+     */
+    override fun count(): Int = count
+}

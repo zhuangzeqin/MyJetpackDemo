@@ -2,6 +2,7 @@ package com.zzq.my.jetpacks.common.net
 
 import com.zzq.my.jetpacks.common.BuildConfig
 import com.zzq.my.jetpacks.common.net.interceptors.KtHttpLogInterceptor
+import com.zzq.my.jetpacks.common.net.interceptors.RequestInterceptor
 import com.zzq.my.jetpacks.common.net.interceptors.RetryInterceptor
 import okhttp3.ConnectionPool
 import okhttp3.OkHttpClient
@@ -60,12 +61,15 @@ class RetrofitClient {
             .connectionPool(ConnectionPool(8, 15, TimeUnit.SECONDS))
             .addNetworkInterceptor(KtHttpLogInterceptor() {
                 if (BuildConfig.DEBUG) {
+                    setLogColor(KtHttpLogInterceptor.LogColor.INFO)
                     setLogLevel(KtHttpLogInterceptor.LogLevel.BODY)
                 } else {
+                    setLogColor(KtHttpLogInterceptor.LogColor.INFO)
                     setLogLevel(KtHttpLogInterceptor.LogLevel.NONE)
                 }
             })
-            .addNetworkInterceptor(RetryInterceptor(1))//重试1次
+//            .addNetworkInterceptor(RetryInterceptor(1))//重试1次
+            .addNetworkInterceptor(RequestInterceptor())//
             .build()
     }
 
