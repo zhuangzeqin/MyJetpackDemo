@@ -14,7 +14,6 @@ import okhttp3.FormBody
 import okhttp3.Interceptor
 import okhttp3.Response
 import okio.Buffer
-import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 import java.util.*
 
@@ -49,6 +48,8 @@ class RequestInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val originRequest = chain.request()
         val rootMap = TreeMap<String, String>()
+
+
         // 公共请求参数
         val attachHeaders = mutableListOf<Pair<String, String>>(
 //            "appid" to NET_CONFIG_APP_ID,
@@ -87,7 +88,7 @@ class RequestInterceptor : Interceptor {
                     requestBody.writeTo(buffer)
                     buffer.readByteString().utf8()
                 }.onSuccess {
-                    val map = gson.fromJson<Map<String, Any>>(it, mapType)
+                    val map = gson.fromJson<Map<String, String>>(it, mapType)
                     map.forEach { p ->
 //                        signHeaders.add(p.key to p.value.toString())
                         rootMap[p.key] = p.value.toString()
@@ -98,16 +99,17 @@ class RequestInterceptor : Interceptor {
 
         val timestamp = System.currentTimeMillis().toString() //时间戳
 //        signHeaders.add(Pair("timestamp", timestamp))
-        rootMap.put("timestamp",timestamp)
+        rootMap.put("timestamp", timestamp)
         val loginToken = SpUtils.getString("token", "")//登录的token
 //        signHeaders.add(Pair("loginToken", loginToken.toString()))
-        rootMap.put("loginToken", loginToken.toString())
+        if (!loginToken.isNullOrEmpty()) {
+            loginToken.let { rootMap.put("loginToken", loginToken.toString()) }
+        }
         //1 遍历map key拼接  key=value&
         //2 value 空的不拼接
         var signValue = ""
-        rootMap.forEach{
-                p-> signValue = signValue + p.key + "=" + p.value + "&" }
-        signValue.plus("&appkey=$KEY_VALUE")
+        rootMap.forEach { p -> signValue = signValue + p.key + "=" + p.value + "&" }
+        signValue = signValue.plus(KEY_VALUE)
         // 加密的请求参数按照Ascii排序 用&拼接加上"&appkey=appKeyValue"
 //        val signValue = signHeaders
 //            .sortedBy { it.first }
@@ -125,10 +127,10 @@ class RequestInterceptor : Interceptor {
 //        }
 
         // 添加签名信息
-        appDeviceInfo?.let { newRequest.header("app-info", it) }
         newRequest.header("Content-Type", "application/json; charset=UTF-8")
         newRequest.header("Connection", "keep-alive")
         newRequest.header("Accept", "*/*")
+        appDeviceInfo?.let { newRequest.header("app-info", it) }
         return chain.proceed(newRequest.build())
     }
 
@@ -138,34 +140,59 @@ class RequestInterceptor : Interceptor {
      * @return
      */
     private fun getAppDeviceInfo(sign: String, timestamp: String): String? {
-        return try {
-            val appDeviceInfo = AppDeviceInfo()
-            // app的项目名比如盛代宝后面有可能是OEM
-            appDeviceInfo.setAppName("盛代宝")
-            appDeviceInfo.setName(Build.MODEL) // 型号 Mi 5s plus
-            appDeviceInfo.setSystemName("android") // android / ios
-            appDeviceInfo.setSystemVersion(Build.VERSION.RELEASE) //系统版本 8.0.0
-            appDeviceInfo.setDeviceId(getDeviceId()) //设备id
-            appDeviceInfo.setAppVersion(getVersionName()) //app版本
-            appDeviceInfo.setAppBuild(getUUID()) //app构建版本
-            val appNo = "2" // app的标志
-            val agentOem = "200010" //新增组织id头部固定上送
-            appDeviceInfo.setAppNo(appNo)
-            appDeviceInfo.setAgentOem(agentOem) //组织ID---
-            appDeviceInfo.setAppChannel(appNo) //app渠道---
-            val loginToken = SpUtils.getString("token", "")//登录的token
-            //        String loginToken = PreferenceUtils.getStringParam(ConfigPathConstants.SP_LOGINTOKEN, "unknow");
+
+        val appDeviceInfo = AppDeviceInfo()
+        // app的项目名比如盛代宝后面有可能是OEM
+        appDeviceInfo.setAppName("盛代宝")
+        appDeviceInfo.setName(Build.MODEL) // 型号 Mi 5s plus
+        appDeviceInfo.setSystemName("android") // android / ios
+        appDeviceInfo.setSystemVersion(Build.VERSION.RELEASE) //系统版本 8.0.0
+        appDeviceInfo.setDeviceId(getDeviceId()) //设备id
+        appDeviceInfo.setAppVersion(getVersionName()) //app版本
+        appDeviceInfo.setAppBuild(getUUID()) //app构建版本
+        val appNo = "2" // app的标志
+        val agentOem = "200010" //新增组织id头部固定上送
+        appDeviceInfo.setAppNo(appNo)
+        appDeviceInfo.setAgentOem(agentOem) //组织ID---
+        appDeviceInfo.setAppChannel(appNo) //app渠道---
+        val loginToken = SpUtils.getString("token", "")//登录的token
+        //        String loginToken = PreferenceUtils.getStringParam(ConfigPathConstants.SP_LOGINTOKEN, "unknow");
+        if (!loginToken.isNullOrEmpty()) {
             appDeviceInfo.setLoginToken(loginToken) //登陆token
-            appDeviceInfo.setTimestamp(timestamp) //当前的时间戳
-            appDeviceInfo.setSign(sign)
-            appDeviceInfo.setJpushDevice("10000") //获取极光推送的注册的id
-            val jsonData: String = gson.toJson(appDeviceInfo) //公共参数转换为json 字符串
-            //最好编码一下； 防止乱码
-            URLEncoder.encode(jsonData, "UTF-8")
-        } catch (e: UnsupportedEncodingException) {
-            e.printStackTrace()
-            ""
         }
+        appDeviceInfo.setTimestamp(timestamp) //当前的时间戳
+        appDeviceInfo.setSign(sign)
+        appDeviceInfo.setJpushDevice("10000") //获取极光推送的注册的id
+        val jsonData: String = gson.toJson(appDeviceInfo) //公共参数转换为json 字符串
+        return URLEncoder.encode(jsonData, "UTF-8")
+//        return try {
+//            val appDeviceInfo = AppDeviceInfo()
+//            // app的项目名比如盛代宝后面有可能是OEM
+//            appDeviceInfo.setAppName("盛代宝")
+//            appDeviceInfo.setName(Build.MODEL) // 型号 Mi 5s plus
+//            appDeviceInfo.setSystemName("android") // android / ios
+//            appDeviceInfo.setSystemVersion(Build.VERSION.RELEASE) //系统版本 8.0.0
+//            appDeviceInfo.setDeviceId(getDeviceId()) //设备id
+//            appDeviceInfo.setAppVersion(getVersionName()) //app版本
+//            appDeviceInfo.setAppBuild(getUUID()) //app构建版本
+//            val appNo = "2" // app的标志
+//            val agentOem = "200010" //新增组织id头部固定上送
+//            appDeviceInfo.setAppNo(appNo)
+//            appDeviceInfo.setAgentOem(agentOem) //组织ID---
+//            appDeviceInfo.setAppChannel(appNo) //app渠道---
+//            val loginToken = SpUtils.getString("token", "")//登录的token
+//            //        String loginToken = PreferenceUtils.getStringParam(ConfigPathConstants.SP_LOGINTOKEN, "unknow");
+//            appDeviceInfo.setLoginToken(loginToken) //登陆token
+//            appDeviceInfo.setTimestamp(timestamp) //当前的时间戳
+//            appDeviceInfo.setSign(sign)
+//            appDeviceInfo.setJpushDevice("10000") //获取极光推送的注册的id
+//            val jsonData: String = gson.toJson(appDeviceInfo) //公共参数转换为json 字符串
+//            //最好编码一下； 防止乱码
+//            URLEncoder.encode(jsonData, "UTF-8")
+//        } catch (e: UnsupportedEncodingException) {
+//            e.printStackTrace()
+//            ""
+//        }
     }
 
     /**
