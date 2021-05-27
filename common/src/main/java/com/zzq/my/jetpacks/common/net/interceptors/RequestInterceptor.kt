@@ -49,7 +49,6 @@ class RequestInterceptor : Interceptor {
         val originRequest = chain.request()
         val rootMap = TreeMap<String, String>()
 
-
         // 公共请求参数
         val attachHeaders = mutableListOf<Pair<String, String>>(
 //            "appid" to NET_CONFIG_APP_ID,
@@ -63,7 +62,7 @@ class RequestInterceptor : Interceptor {
 //            "version" to AppUtils.getAppVersionName()
         )
         // 需要加密的请求参数 公共请求参数加上原本的请求参数
-        val signHeaders = mutableListOf<Pair<String, String>>()
+//        val signHeaders = mutableListOf<Pair<String, String>>()
 //        signHeaders.addAll(attachHeaders)
         //get的请求，参数
         if (originRequest.method == "GET") {

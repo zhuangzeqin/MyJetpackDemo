@@ -1,9 +1,8 @@
 package com.zzq.my.jetpacks.common.net
 
-import com.zzq.my.jetpacks.common.BuildConfig
+
 import com.zzq.my.jetpacks.common.net.interceptors.KtHttpLogInterceptor
 import com.zzq.my.jetpacks.common.net.interceptors.RequestInterceptor
-import com.zzq.my.jetpacks.common.net.interceptors.RetryInterceptor
 import okhttp3.ConnectionPool
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -17,6 +16,7 @@ import java.util.concurrent.TimeUnit
  * 邮箱：zzq@eeepay.cn
  * 备注: 采用的是kt 单例模式
  */
+private const val TAG = "RetrofitClient"
 class RetrofitClient {
     companion object {
         private lateinit var retrofit: Retrofit
@@ -59,17 +59,19 @@ class RetrofitClient {
             .writeTimeout(10, TimeUnit.SECONDS) //向服务器写入数据的时长
             .retryOnConnectionFailure(true)//是否重连
             .connectionPool(ConnectionPool(8, 15, TimeUnit.SECONDS))
-            .addNetworkInterceptor(KtHttpLogInterceptor() {
-                if (BuildConfig.DEBUG) {
-                    setLogColor(KtHttpLogInterceptor.LogColor.INFO)
-                    setLogLevel(KtHttpLogInterceptor.LogLevel.BODY)
-                } else {
-                    setLogColor(KtHttpLogInterceptor.LogColor.INFO)
-                    setLogLevel(KtHttpLogInterceptor.LogLevel.NONE)
-                }
-            })
+//            .addInterceptor(HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
+//                override fun log(message: String) {
+//                    Log.d(TAG, "log: $message")
+//                }
+//            }).setLevel(HttpLoggingInterceptor.Level.BODY))
 //            .addNetworkInterceptor(RetryInterceptor(1))//重试1次
+            .addInterceptor(KtHttpLogInterceptor(){
+                setTag("HttpLog")
+                setLogLevel(KtHttpLogInterceptor.LogLevel.BODY)
+            })
+
             .addNetworkInterceptor(RequestInterceptor())//
+//            .addInterceptor(LoggingInterceptor2())
             .build()
     }
 

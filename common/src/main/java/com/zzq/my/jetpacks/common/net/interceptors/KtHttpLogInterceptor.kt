@@ -2,29 +2,32 @@ package com.zzq.my.jetpacks.common.net.interceptors
 
 import android.util.Log
 import okhttp3.*
+import okio.Buffer
 import java.net.URLDecoder
+import java.nio.charset.Charset
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.text.StringBuilder
- /*
-   * ================================================
-   * 描述：日志拦截器
-   * 作者：zhuangzeqin
-   * 时间: 2021/5/21-15:16
-   * 邮箱：zzq@eeepay.cn
-   * 备注:
-   * ----------------------------------------------------------------
-   * You never know what you can do until you try !
-   *      _              _           _     _   ____  _             _ _
-   *     / \   _ __   __| |_ __ ___ (_) __| | / ___|| |_ _   _  __| (_) ___
-   *    / _ \ | '_ \ / _` | '__/ _ \| |/ _` | \___ \| __| | | |/ _` | |/ _ \
-   *   / ___ \| | | | (_| | | | (_) | | (_| |  ___) | |_| |_| | (_| | | (_) |
-   *  /_/   \_\_| |_|\__,_|_|  \___/|_|\__,_| |____/ \__|\__,_|\__,_|_|\___/
-   *
-   * 签名：最痛苦的事不是我失败了，而是我本可以.--zzq
-   * ----------------------------------------------------------------
-   * ================================================
-   */
+
+
+/*
+  * ================================================
+  * 描述：日志拦截器
+  * 作者：zhuangzeqin
+  * 时间: 2021/5/21-15:16
+  * 邮箱：zzq@eeepay.cn
+  * 备注:
+  * ----------------------------------------------------------------
+  * You never know what you can do until you try !
+  *      _              _           _     _   ____  _             _ _
+  *     / \   _ __   __| |_ __ ___ (_) __| | / ___|| |_ _   _  __| (_) ___
+  *    / _ \ | '_ \ / _` | '__/ _ \| |/ _` | \___ \| __| | | |/ _` | |/ _ \
+  *   / ___ \| | | | (_| | | | (_) | | (_| |  ___) | |_| |_| | (_| | | (_) |
+  *  /_/   \_\_| |_|\__,_|_|  \___/|_|\__,_| |____/ \__|\__,_|\__,_|_|\___/
+  *
+  * 签名：最痛苦的事不是我失败了，而是我本可以.--zzq
+  * ----------------------------------------------------------------
+  * ================================================
+  */
 class KtHttpLogInterceptor(block: (KtHttpLogInterceptor.() -> Unit)? = null) : Interceptor {
 
     /**
@@ -172,10 +175,22 @@ class KtHttpLogInterceptor(block: (KtHttpLogInterceptor.() -> Unit)? = null) : I
         }
         sb.appendLine(headers)
     }
-
+    private val UTF8 = Charset.forName("UTF-8")
     private fun logBodyReq(sb: StringBuilder, request: Request, connection: Connection?) {
         logHeadersReq(sb, request, connection)
-        sb.appendLine("请求体: ${request.body.toString()}")
+        var body: String? = null
+        if (request.body != null) {
+            val buffer = Buffer()
+            request.body!!.writeTo(buffer)
+            var charset: Charset = UTF8
+            val contentType: MediaType = request.body!!.contentType() as MediaType
+            if (contentType != null) {
+                charset = contentType.charset(UTF8)!!
+            }
+            body = buffer.readString(charset)
+        }
+
+        sb.appendLine("请求体: ${body.toString()}")
     }
     //endregion
 
