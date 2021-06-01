@@ -234,19 +234,19 @@ class KtHttpLogInterceptor(block: (KtHttpLogInterceptor.() -> Unit)? = null) : I
     private fun logIt(any: Any, color: LogColor? = null) {
         when (color ?: this.logColor) {
             LogColor.VERBOSE -> Log.v(
-                TAG, any.toString()
+                this.tag, any.toString()
             )
             LogColor.DEBUG -> Log.d(
-                TAG, any.toString()
+                this.tag, any.toString()
             )
             LogColor.INFO -> Log.i(
-                TAG, any.toString()
+                this.tag, any.toString()
             )
             LogColor.WARN -> Log.w(
-                TAG, any.toString()
+                this.tag, any.toString()
             )
             LogColor.ERROR -> Log.e(
-                TAG, any.toString()
+                this.tag, any.toString()
             )
         }
     }

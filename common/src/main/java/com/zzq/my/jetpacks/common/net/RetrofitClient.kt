@@ -67,6 +67,7 @@ class RetrofitClient {
 //            .addNetworkInterceptor(RetryInterceptor(1))//重试1次
             .addInterceptor(KtHttpLogInterceptor(){
                 setTag("HttpLog")
+                setLogColor(KtHttpLogInterceptor.LogColor.INFO)
                 setLogLevel(KtHttpLogInterceptor.LogLevel.BODY)
             })
 
